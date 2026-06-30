@@ -19,7 +19,7 @@ const authMiddleware = (req, res, next) => {
     req.user = decoded; // Should contain user id (e.g. req.user.id)
     next();
   } catch (error) {
-    return res.status(403).json({ message: 'Token tidak valid atau telah kedaluwarsa.' });
+    return res.status(401).json({ message: 'Token tidak valid atau telah kedaluwarsa.' });
   }
 };
 
