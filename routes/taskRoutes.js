@@ -6,8 +6,10 @@ const { validateTask } = require('../middlewares/validationMiddleware');
 
 router.use(authMiddleware);
 
-router.get('/', taskController.getTasks);
+// Stats route HARUS sebelum getTasks (/) agar ter-match dengan benar
 router.get('/stats', taskController.getDashboardStats);
+
+router.get('/', taskController.getTasks);
 router.get('/:id', taskController.getTaskById);
 router.post('/', validateTask, taskController.createTask);
 router.put('/:id', validateTask, taskController.updateTask);
