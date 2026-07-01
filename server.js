@@ -54,14 +54,25 @@ app.get('/debug/db', async (req, res) => {
 app.get('/debug/env', (req, res) => {
   const envVars = {
     NODE_ENV: process.env.NODE_ENV,
+    // DB-style variables
     DB_HOST: process.env.DB_HOST ? 'Set' : 'Not set',
     DB_PORT: process.env.DB_PORT,
     DB_USER: process.env.DB_USER ? 'Set' : 'Not set',
     DB_NAME: process.env.DB_NAME,
     DB_SSL: process.env.DB_SSL,
+    // MYSQL-style variables (Aiven)
+    MYSQL_HOST: process.env.MYSQL_HOST ? 'Set' : 'Not set',
+    MYSQL_PORT: process.env.MYSQL_PORT,
+    MYSQL_USER: process.env.MYSQL_USER ? 'Set' : 'Not set',
+    MYSQL_DATABASE: process.env.MYSQL_DATABASE,
+    MYSQL_PASSWORD: process.env.MYSQL_PASSWORD ? 'Set' : 'Not set',
+    MYSQL_SSL: process.env.MYSQL_SSL,
+    // JWT
     JWT_SECRET: process.env.JWT_SECRET ? 'Set' : 'Not set',
+    // SSL certificates
     MYSQL_SSL_CA: process.env.MYSQL_SSL_CA ? 'Set' : 'Not set',
-    CA_CERT: process.env.CA_CERT ? 'Set' : 'Not set'
+    CA_CERT: process.env.CA_CERT ? 'Set' : 'Not set',
+    SSL_CA_CERT: process.env.SSL_CA_CERT ? 'Set' : 'Not set'
   };
   res.json(envVars);
 });
