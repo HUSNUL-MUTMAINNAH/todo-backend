@@ -76,7 +76,93 @@ app.get('/debug/db', async (req, res) => {
   }
 });
 
-// Debug environment variables (safe version - hide sensitive data)
+// Setup database tables endpoint (untuk manual initialization)
+app.post('/setup-db', async (req, res) => {
+  try {
+    const conn = await pool.getConnection();
+    
+    console.log('📋 Creating database tables...');
+    
+    // Create users table
+    await conn.execute(`
+      CREATE TABLE IF NOT EXISTS users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        fullname VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL UNIQUE,
+        password VARCHAR(255) NOT NULL,
+        photo LONGTEXT DEFAULT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    `);
+    
+    // Create categories table
+    await conn.execute(`
+      CREATE TABLE IF NOT EXISTS categories (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        name VARCHAR(100) NOT NULL,
+        color VARCHAR(7) NOT NULL,
+        icon VARCHAR(50) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    `);
+    
+    // Create tasks table
+    await conn.execute(`
+      CREATE TABLE IF NOT EXISTS tasks (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        category_id INT DEFAULT NULL,
+        title VARCHAR(255) NOT NULL,
+        description TEXT DEFAULT NULL,
+        priority ENUM('Low', 'Medium', 'High') DEFAULT 'Medium',
+        status ENUM('Pending', 'In Progress', 'Completed', 'Overdue') DEFAULT 'Pending',
+        deadline_date DATE NOT NULL,
+        deadline_time TIME NOT NULL,
+        reminder_type VARCHAR(50) DEFAULT 'none',
+        reminder_datetime DATETIME DEFAULT NULL,
+        completed_at TIMESTAMP DEFAULT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    `);
+    
+    // Create notifications table
+    await conn.execute(`
+      CREATE TABLE IF NOT EXISTS notifications (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        task_id INT DEFAULT NULL,
+        title VARCHAR(255) NOT NULL,
+        message TEXT NOT NULL,
+        is_read BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    `);
+    
+    conn.release();
+    
+    res.json({ 
+      status: 'ok',
+      message: 'Database tables created successfully',
+      tables: ['users', 'categories', 'tasks', 'notifications']
+    });
+  } catch (err) {
+    console.error('Setup DB error:', err);
+    res.status(500).json({ 
+      status: 'error',
+      message: err.message,
+      code: err.code
+    });
+  }
+});
 app.get('/debug/env', (req, res) => {
   const envVars = {
     NODE_ENV: process.env.NODE_ENV,
