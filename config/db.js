@@ -37,8 +37,12 @@ const dbConfig = {
   database: dbName,
   port: parseInt(dbPort) || 3306,
   waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
+  connectionLimit: 5,  // ✅ Reduced for serverless (was 10)
+  queueLimit: 5,       // ✅ Added queue limit
+  enableKeepAlive: true,  // ✅ Keep connections alive
+  keepAliveInitialDelayMs: 0,
+  idleTimeout: 5000,   // ✅ Close idle connections after 5s
+  waitForConnectionsMs: 3000  // ✅ Timeout if can't get connection in 3s
 };
 
 // Log configuration (without password)

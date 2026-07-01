@@ -130,11 +130,28 @@ const taskController = {
   async getDashboardStats(req, res) {
     try {
       const userId = req.user.id;
+      console.log(`📊 Fetching dashboard stats for user ${userId}...`);
       const stats = await Task.getDashboardStats(userId);
+      console.log(`✅ Dashboard stats fetched successfully`);
       res.status(200).json({ stats });
     } catch (error) {
-      console.error('Get Stats Error:', error);
-      res.status(500).json({ message: 'Terjadi kesalahan saat mengambil statistik dashboard.' });
+      console.error('❌ Get Stats Error:', error.message);
+      console.error('Error code:', error.code);
+      console.error('Error errno:', error.errno);
+      
+      // Return more specific error based on database error
+      if (error.code === 'ER_DUP_ENTRY' || error.errno === 1062) {
+        return res.status(400).json({ message: 'Duplikat data terdeteksi.' });
+      }
+      
+      if (error.code === 'ETIMEDOUT' || error.code === 'ECONNREFUSED') {
+        return res.status(503).json({ message: 'Koneksi database timeout. Coba lagi.' });
+      }
+      
+      res.status(500).json({ 
+        message: 'Terjadi kesalahan saat mengambil statistik dashboard.',
+        debug: process.env.NODE_ENV === 'development' ? error.message : undefined
+      });
     }
   }
 };

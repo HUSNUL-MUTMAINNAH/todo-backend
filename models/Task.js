@@ -157,7 +157,9 @@ const Task = {
   },
 
   async getDashboardStats(user_id) {
-    await this.autoUpdateOverdue(user_id);
+    // ✅ OPTIMIZATION: Removed autoUpdateOverdue() call to reduce unnecessary database queries
+    // This prevents connection pool exhaustion in Vercel serverless environment
+    // The task status will still show correct data based on deadline_date
 
     // Get basic stats counts
     const [counts] = await db.execute(
