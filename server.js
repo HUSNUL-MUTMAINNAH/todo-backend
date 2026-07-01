@@ -11,31 +11,15 @@ const authRoutes = require('./routes/authRoutes');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Global Middlewares
+// Global Middlewares - CORS with simpler approach
 app.use(cors({
-  origin: function(origin, callback) {
-    // ✅ Allow requests from:
-    // - Any Vercel deployment (vercel.app)
-    // - localhost (development)
-    // - No origin header (mobile apps, same-origin requests)
-    
-    if (!origin) {
-      // No origin header - allow (mobile apps, server-to-server)
-      callback(null, true);
-    } else if (origin.includes('vercel.app') || origin.includes('localhost')) {
-      callback(null, true);
-    } else {
-      // Origin not allowed
-      callback(null, false); // Changed from Error to false
-    }
-  },
+  origin: true, // Allow all origins (will be filtered by origin check below if needed)
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.options('*', cors()); // Enable preflight for all routes
-app.options('*', cors()); // Enable preflight across all routes
 // Support large JSON payloads for profile pictures
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
