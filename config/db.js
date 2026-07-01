@@ -47,7 +47,11 @@ console.log('🔧 Database configuration:', {
   port: dbConfig.port,
   database: dbConfig.database,
   user: dbConfig.user,
-  ssl: !!dbConfig.ssl
+  ssl: !!dbConfig.ssl,
+  DB_SSL: process.env.DB_SSL,
+  DB_HOST: process.env.DB_HOST,
+  MYSQL_SSL_CA: process.env.MYSQL_SSL_CA ? 'Set' : 'Not set',
+  CA_CERT: process.env.CA_CERT ? 'Set' : 'Not set'
 });
 
 const pool = mysql.createPool(dbConfig);

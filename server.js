@@ -50,6 +50,22 @@ app.get('/debug/db', async (req, res) => {
   }
 });
 
+// Debug environment variables (safe version - hide sensitive data)
+app.get('/debug/env', (req, res) => {
+  const envVars = {
+    NODE_ENV: process.env.NODE_ENV,
+    DB_HOST: process.env.DB_HOST ? 'Set' : 'Not set',
+    DB_PORT: process.env.DB_PORT,
+    DB_USER: process.env.DB_USER ? 'Set' : 'Not set',
+    DB_NAME: process.env.DB_NAME,
+    DB_SSL: process.env.DB_SSL,
+    JWT_SECRET: process.env.JWT_SECRET ? 'Set' : 'Not set',
+    MYSQL_SSL_CA: process.env.MYSQL_SSL_CA ? 'Set' : 'Not set',
+    CA_CERT: process.env.CA_CERT ? 'Set' : 'Not set'
+  };
+  res.json(envVars);
+});
+
 // Mounting Routes
 app.use('/', authRoutes); // Exposes POST /register, POST /login, PUT /change-password
 app.use('/tasks', taskRoutes); // Exposes GET /tasks, GET /tasks/:id, etc.
