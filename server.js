@@ -13,13 +13,14 @@ const PORT = process.env.PORT || 3000;
 
 // Global Middlewares
 app.use(cors({
-  origin: [
-    'http://localhost:8081', 
-    'exp://localhost:8081', 
-    'https://todo-backend-eight-woad.vercel.app',
-    'https://todo-frontend.vercel.app',
-    'https://*.vercel.app'  // Allow all Vercel preview URLs
-  ],
+  origin: function(origin, callback) {
+    // Allow requests from any Vercel deployment or localhost
+    if (!origin || origin.includes('vercel.app') || origin.includes('localhost')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization']
