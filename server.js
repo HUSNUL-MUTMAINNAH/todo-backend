@@ -26,13 +26,15 @@ app.use(cors({
       callback(null, true);
     } else {
       // Origin not allowed
-      callback(new Error('CORS not allowed'));
+      callback(null, false); // Changed from Error to false
     }
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+app.options('*', cors()); // Enable preflight for all routes
 app.options('*', cors()); // Enable preflight across all routes
 // Support large JSON payloads for profile pictures
 app.use(express.json({ limit: '10mb' }));
