@@ -2,23 +2,52 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
-const authRoutes = require('./routes/authRoutes');
+const pool = require('./config/db');
 const taskRoutes = require('./routes/taskRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Global Middlewares
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:8081', 'exp://localhost:8081', 'https://todo-backend-eight-woad.vercel.app'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+app.options('*', cors()); // Enable preflight across all routes
 // Support large JSON payloads for profile pictures
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Health Check
+// Health check endpoint
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'OK', message: 'To Do List API is running.' });
+  res.json({ 
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    service: 'todo-backend'
+  });
+});
+
+// Debug DB connection status
+app.get('/debug/db', async (req, res) => {
+  try {
+    const conn = await pool.getConnection();
+    await conn.ping(); // simple ping
+    conn.release();
+    res.json({ status: 'ok', message: 'Database connection successful' });
+  } catch (err) {
+    console.error('DB debug error:', err);
+    res.status(500).json({ 
+      status: 'error', 
+      message: err.message,
+      code: err.code,
+      errno: err.errno
+    });
+  }
 });
 
 // Mounting Routes
