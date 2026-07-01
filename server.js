@@ -13,7 +13,13 @@ const PORT = process.env.PORT || 3000;
 
 // Global Middlewares
 app.use(cors({
-  origin: ['http://localhost:8081', 'exp://localhost:8081', 'https://todo-backend-eight-woad.vercel.app'],
+  origin: [
+    'http://localhost:8081', 
+    'exp://localhost:8081', 
+    'https://todo-backend-eight-woad.vercel.app',
+    'https://todo-frontend.vercel.app',
+    'https://*.vercel.app'  // Allow all Vercel preview URLs
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization']
