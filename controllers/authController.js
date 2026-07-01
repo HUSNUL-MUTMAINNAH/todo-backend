@@ -30,9 +30,11 @@ const authController = {
         console.error('Stack:', dbError.stack);
         console.error('Code:', dbError.code);
         console.error('SQL:', dbError.sqlMessage);
+        console.error('Errno:', dbError.errno);
         return res.status(500).json({ 
           message: 'Database error saat memeriksa email',
-          error: dbError.message 
+          error: dbError.message,
+          code: dbError.code 
         });
       }
 
@@ -71,9 +73,11 @@ const authController = {
         console.error('Stack:', createError.stack);
         console.error('Code:', createError.code);
         console.error('SQL:', createError.sqlMessage);
+        console.error('Errno:', createError.errno);
         return res.status(500).json({ 
           message: 'Error saat membuat akun di database',
-          error: createError.message 
+          error: createError.message,
+          code: createError.code
         });
       }
 
@@ -91,6 +95,7 @@ const authController = {
       console.error('Message:', error.message);
       console.error('Stack:', error.stack);
       console.error('Code:', error.code);
+      console.error('Errno:', error.errno);
       res.status(500).json({ 
         message: 'Terjadi kesalahan pada server saat registrasi.', 
         error: error.message,
@@ -123,9 +128,11 @@ const authController = {
         console.error('Stack:', dbError.stack);
         console.error('Code:', dbError.code);
         console.error('SQL:', dbError.sqlMessage);
+        console.error('Errno:', dbError.errno);
         return res.status(500).json({ 
           message: 'Database error saat mencari user',
-          error: dbError.message 
+          error: dbError.message,
+          code: dbError.code 
         });
       }
 
@@ -183,6 +190,7 @@ const authController = {
       console.error('Message:', error.message);
       console.error('Stack:', error.stack);
       console.error('Code:', error.code);
+      console.error('Errno:', error.errno);
       res.status(500).json({ 
         message: 'Terjadi kesalahan pada server saat login.', 
         error: error.message,

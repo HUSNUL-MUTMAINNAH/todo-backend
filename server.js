@@ -190,6 +190,36 @@ app.get('/debug/env', (req, res) => {
   res.json(envVars);
 });
 
+// Test connection endpoint
+app.get('/test-connection', async (req, res) => {
+  try {
+    console.log('🔍 Testing database connection...');
+    const conn = await pool.getConnection();
+    console.log('✅ Connection acquired');
+    
+    await conn.ping();
+    console.log('✅ Ping successful');
+    
+    conn.release();
+    console.log('✅ Connection released');
+    
+    res.json({ 
+      status: 'ok',
+      message: 'Database connection successful'
+    });
+  } catch (err) {
+    console.error('❌ Connection test failed:', err.message);
+    console.error('Code:', err.code);
+    console.error('Stack:', err.stack);
+    res.status(500).json({ 
+      status: 'error',
+      message: err.message,
+      code: err.code,
+      hint: 'Check MYSQL_SSL_CA environment variable'
+    });
+  }
+});
+
 // Mounting Routes
 app.use('/', authRoutes); // Exposes POST /register, POST /login, PUT /change-password
 app.use('/tasks', taskRoutes); // Exposes GET /tasks, GET /tasks/:id, etc.
