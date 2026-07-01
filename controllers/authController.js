@@ -35,18 +35,17 @@ const authController = {
       });
       console.log('User created:', user);
 
-      // Get complete user data after creation
-      const completeUser = await User.findById(user.id);
-      console.log('Complete user data:', completeUser);
-
-      // Generate JWT Token
-      const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '30d' });
-      console.log('JWT token generated');
+      // ✅ PERUBAHAN: Tidak generate token untuk register
+      // User harus login ulang untuk mendapat token
+      // Ini memastikan user benar-benar bisa login dengan password yang diberikan
 
       res.status(201).json({
-        message: 'Registrasi berhasil!',
-        token,
-        user: completeUser
+        message: 'Registrasi berhasil! Silakan login dengan akun Anda.',
+        user: {
+          id: user.id,
+          fullname: user.fullname,
+          email: user.email
+        }
       });
     } catch (error) {
       console.error('Register Error details:', error);
