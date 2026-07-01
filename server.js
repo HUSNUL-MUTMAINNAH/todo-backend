@@ -35,18 +35,44 @@ app.get('/health', (req, res) => {
 // Debug DB connection status
 app.get('/debug/db', async (req, res) => {
   try {
+    // Log current configuration
+    console.log('Attempting database connection...');
+    
     const conn = await pool.getConnection();
     await conn.ping(); // simple ping
     conn.release();
-    res.json({ status: 'ok', message: 'Database connection successful' });
+    
+    // Try to get some data
+    const [rows] = await conn.query('SELECT COUNT(*) as user_count FROM users');
+    
+    res.json({ 
+      status: 'ok', 
+      message: 'Database connection successful',
+      user_count: rows[0].user_count
+    });
   } catch (err) {
     console.error('DB debug error:', err);
-    res.status(500).json({ 
+    
+    // Check if it's an environment variable issue
+    const missingVars = [];
+    if (!process.env.DB_HOST && !process.env.MYSQL_HOST) missingVars.push('DB_HOST/MYSQL_HOST');
+    if (!process.env.DB_USER && !process.env.MYSQL_USER) missingVars.push('DB_USER/MYSQL_USER');
+    if (!process.env.DB_NAME && !process.env.MYSQL_DATABASE) missingVars.push('DB_NAME/MYSQL_DATABASE');
+    
+    const errorResponse = { 
       status: 'error', 
       message: err.message,
       code: err.code,
-      errno: err.errno
-    });
+      errno: err.errno,
+      suggestion: 'Check environment variables in Vercel dashboard'
+    };
+    
+    if (missingVars.length > 0) {
+      errorResponse.missing_environment_variables = missingVars;
+      errorResponse.detailed_suggestion = `The following environment variables are missing: ${missingVars.join(', ')}. Please set them in Vercel dashboard.`;
+    }
+    
+    res.status(500).json(errorResponse);
   }
 });
 
