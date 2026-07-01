@@ -14,11 +14,19 @@ const PORT = process.env.PORT || 3000;
 // Global Middlewares
 app.use(cors({
   origin: function(origin, callback) {
-    // Allow requests from any Vercel deployment or localhost
-    if (!origin || origin.includes('vercel.app') || origin.includes('localhost')) {
+    // ✅ Allow requests from:
+    // - Any Vercel deployment (vercel.app)
+    // - localhost (development)
+    // - No origin header (mobile apps, same-origin requests)
+    
+    if (!origin) {
+      // No origin header - allow (mobile apps, server-to-server)
+      callback(null, true);
+    } else if (origin.includes('vercel.app') || origin.includes('localhost')) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      // Origin not allowed
+      callback(new Error('CORS not allowed'));
     }
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
