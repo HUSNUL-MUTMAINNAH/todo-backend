@@ -112,7 +112,8 @@ describe('Auth Endpoints', () => {
         .set('Authorization', `Bearer ${authToken}`)
         .send({
           fullname: 'Updated Name',
-          email: testUser.email
+          email: testUser.email,
+          photo: null  // ✅ FIX: Use null instead of undefined
         });
       
       expect(res.statusCode).toBe(200);

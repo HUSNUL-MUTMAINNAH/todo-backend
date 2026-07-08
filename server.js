@@ -237,8 +237,8 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Terjadi kesalahan internal pada server.' });
 });
 
-// Start Server
-if (process.env.NODE_ENV !== 'production') {
+// Start Server - Only start if not in test environment
+if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on http://localhost:${PORT}`);
   });

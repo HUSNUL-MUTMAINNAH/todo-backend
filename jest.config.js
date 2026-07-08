@@ -8,5 +8,6 @@ module.exports = {
     'models/**/*.js',
     'middlewares/**/*.js'
   ],
-  testTimeout: 30000 // 30 seconds timeout for API tests
+  testTimeout: 30000, // 30 seconds timeout for API tests
+  setupFiles: ['<rootDir>/jest.setup.js']
 };
