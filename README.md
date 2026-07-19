@@ -11,12 +11,13 @@ Backend API untuk aplikasi todo dengan fitur tasks, categories, notifications, d
 - **Testing** - Unit dan integration tests dengan Jest
 - **Database** - MySQL/PostgreSQL support
 - **Vercel Deployment Ready** - Configured untuk deploy ke Vercel
+- **Aiven** - Deployment database
 
 ## Tech Stack
 
 - **Node.js** - Runtime JavaScript
 - **Express.js** - Web framework
-- **MySQL/PostgreSQL** - Aiven
+- **MySQL/PostgreSQL** - Database
 - **JWT** - Authentication
 - **Jest** - Testing framework
 - **Vercel** - Deployment platform
