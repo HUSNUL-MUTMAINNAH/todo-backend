@@ -16,7 +16,7 @@ Backend API untuk aplikasi todo dengan fitur tasks, categories, notifications, d
 
 - **Node.js** - Runtime JavaScript
 - **Express.js** - Web framework
-- **MySQL/PostgreSQL** - Database
+- **MySQL/PostgreSQL** - Aiven
 - **JWT** - Authentication
 - **Jest** - Testing framework
 - **Vercel** - Deployment platform
